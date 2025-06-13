@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing with p5.js</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        #controls {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 80%;
+            max-width: 900px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .control-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        #p5-canvas-container {
+            width: 80%;
+            max-width: 900px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden; /* To ensure canvas respects border-radius */
+        }
+        canvas {
+            display: block; /* Remove extra space below canvas */
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        input[type="file"] {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="controls">
+        <div class="control-group">
+            <label for="fileUpload">Upload Image:</label>
+            <input type="file" id="fileUpload" accept="image/*">
+        </div>
+
+        <div class="control-group">
+            <label for="thresholdSlider">Binarization Threshold: <span id="thresholdValue">127</span></label>
+            <input type="range" id="thresholdSlider" min="0" max="255" value="127">
+        </div>
+
+        <div class="control-group">
+            <select id="viewModeSelect" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <option value="0">Original Image (RGB)</option>
+                <option value="1">Edge Detection (Sobel)</option>
+                <option value="2">Binary Image (Threshold)</option>
+                <option value="3">Model HSB/HSV</option>
+                <option value="4">Model HSL</option>
+                <option value="5">Model HSI</option>
+                <option value="6">Grayscale</option>
+                <option value="7">Model CMYK (simulation)</option>
+                <option value="8">Model YUV</option>
+                <option value="9">Model YIQ</option>
+                <option value="10">Model Lab</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Detected Objects: <span id="objectCount">0</span></label>
+            <label>*****************************</label>
+            <label for="showBoundingBoxesCheckbox">Show Bounding Boxes</label> 
+            <input type="checkbox" id="showBoundingBoxesCheckbox" checked>
+            <label>*****************************</label>
+            
+        </div>
+
+        <div class="control-group">
+            <button id="cropButton">Crop Selected Object</button>
+        </div>
+
+        <div class="control-group">
+            <button id="downloadButton">Download Current View</button>
+        </div>
+
+        <div class="control-group">
+            <button id="reloadImgButton">Reload Original Image</button>
+        </div>
+    </div>
+
+    <div id="p5-canvas-container"></div>
+
+    <script src="sketch.js"></script>
+    <script>
+        // Update threshold value display dynamically
+        document.getElementById('thresholdSlider').addEventListener('input', function() {
+            document.getElementById('thresholdValue').textContent = this.value;
+        });
+    </script>
+</body>
+</html>
